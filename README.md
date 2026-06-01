@@ -17,15 +17,15 @@ Automated daily commits using GitHub Actions. Keeps the contribution graph green
 4. A short random delay between commits makes the log timestamps look natural
 5. Changes are pushed back to `main` automatically
 
-## 📁 Structure
+​## 📁 Structure
 
-​```
+```
 .
 ├── .github/
 │   └── workflows/
 │       └── autocommit.yml   # workflow definition
 └── LAST_UPDATED             # auto-updated log file
-​```
+```
 
 ## 🕐 Schedule
 
