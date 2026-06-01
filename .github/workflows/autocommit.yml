@@ -1,17 +1,15 @@
 name: Auto Commit Daily
-
 on:
   schedule:
     # Jam 8 pagi WIB (01:00 UTC) setiap hari
     - cron: "0 1 * * *"
-  workflow_dispatch: # bisa trigger manual
+  workflow_dispatch:
 
 jobs:
   auto_commit:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - uses: actions/checkout@v4
 
@@ -20,21 +18,35 @@ jobs:
           git config user.email "ryhndastra@gmail.com"
           git config user.name "ryhndastra"
 
-          # Update file log dengan timestamp
-          DATE=$(date '+%Y-%m-%d %H:%M:%S' -d 'TZ="Asia/Jakarta"')
+          MSGS=(
+            "chore: daily update"
+            "chore: keepalive"
+            "chore: daily log update"
+            "chore: auto sync"
+            "chore: scheduled update"
+            "chore: routine maintenance"
+            "chore: periodic sync"
+            "fix: minor adjustment"
+            "docs: update log"
+            "refactor: cleanup"
+          )
 
-          MSGS=("chore: daily update"
-                "chore: keepalive"
-                "chore: daily log update"
-                "chore: auto sync"
-                "chore: scheduled update")
-          MSG=${MSGS[$RANDOM % ${#MSGS[@]}]}
+          # Random jumlah commit antara 10-30
+          MIN=10
+          MAX=30
+          COUNT=$((MIN + RANDOM % (MAX - MIN + 1)))
+          echo "Today's commit count: $COUNT"
 
-          # Commit sebanyak N kali
-          for i in $(seq 1 30); do
-            echo "[$DATE] commit #$i" >> LAST_UPDATED
+          for i in $(seq 1 $COUNT); do
+            DATE=$(date '+%Y-%m-%d %H:%M:%S')
+            MSG=${MSGS[$RANDOM % ${#MSGS[@]}]}
+
+            echo "[$DATE] entry #$i" >> LAST_UPDATED
             git add LAST_UPDATED
-            git commit -m "$MSG ($i)"
+            git commit -m "$MSG"
+
+            # Random delay 1-5 detik biar timestamp tiap commit beda
+            sleep $((1 + RANDOM % 5))
           done
 
           git push
