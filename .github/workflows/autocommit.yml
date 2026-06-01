@@ -1,0 +1,40 @@
+name: Auto Commit Daily
+
+on:
+  schedule:
+    # Jam 8 pagi WIB (01:00 UTC) setiap hari
+    - cron: "0 1 * * *"
+  workflow_dispatch: # bisa trigger manual
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Auto commit
+        run: |
+          git config user.email "ryhndastra@gmail.com"
+          git config user.name "ryhndastra"
+
+          # Update file log dengan timestamp
+          DATE=$(date '+%Y-%m-%d %H:%M:%S' -d 'TZ="Asia/Jakarta"')
+
+          MSGS=("chore: daily update"
+                "chore: keepalive"
+                "chore: daily log update"
+                "chore: auto sync"
+                "chore: scheduled update")
+          MSG=${MSGS[$RANDOM % ${#MSGS[@]}]}
+
+          # Commit sebanyak N kali
+          for i in $(seq 1 30); do
+            echo "[$DATE] commit #$i" >> LAST_UPDATED
+            git add LAST_UPDATED
+            git commit -m "$MSG ($i)"
+          done
+
+          git push
